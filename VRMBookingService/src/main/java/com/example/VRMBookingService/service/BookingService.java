@@ -6,9 +6,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.VRMBookingService.dto.BookingRequest;
 import com.example.VRMBookingService.dto.BookingResponse;
+import com.example.VRMBookingService.dto.VehicleResponse;
 import com.example.VRMBookingService.entity.Booking;
 import com.example.VRMBookingService.repository.BookingRepository;
 
@@ -17,6 +19,11 @@ public class BookingService {
 	
 	@Autowired
     private BookingRepository bookingRepository;
+	
+	@Autowired
+    private RestTemplate restTemplate;
+	
+	private final String VEHICLE_SERVICE_URL = "http://localhost:8082/vehicles/";
 	
 	public List<BookingResponse> getAllBookings() {
 	    return bookingRepository.findAll()
@@ -27,6 +34,17 @@ public class BookingService {
 
 	
 	public BookingResponse bookVehicle(BookingRequest request) {
+		
+		// Step 1: Fetch vehicle details
+        VehicleResponse vehicle = restTemplate.getForObject(
+            VEHICLE_SERVICE_URL + request.getVehicleId(),
+            VehicleResponse.class
+        );
+
+        if (vehicle == null || !vehicle.isAvailable()) {
+            throw new RuntimeException("Vehicle not available");
+        }
+		
         Booking booking = new Booking();
         booking.setUserId(request.getUserId());
         booking.setVehicleId(request.getVehicleId());
