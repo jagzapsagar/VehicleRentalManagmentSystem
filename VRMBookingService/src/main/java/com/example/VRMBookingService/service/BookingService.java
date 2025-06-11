@@ -35,7 +35,7 @@ public class BookingService {
 	
 	public BookingResponse bookVehicle(BookingRequest request) {
 		
-		// Step 1: Fetch vehicle details
+		// Fetch vehicle details
         VehicleResponse vehicle = restTemplate.getForObject(
             VEHICLE_SERVICE_URL + request.getVehicleId(),
             VehicleResponse.class
@@ -44,7 +44,7 @@ public class BookingService {
         if (vehicle == null || !vehicle.isAvailable()) {
             throw new RuntimeException("Vehicle not available");
         }
-		
+     // Create and save booking
         Booking booking = new Booking();
         booking.setUserId(request.getUserId());
         booking.setVehicleId(request.getVehicleId());
@@ -53,15 +53,24 @@ public class BookingService {
         booking.setStatus("BOOKED");
 
         Booking saved = bookingRepository.save(booking);
-
-        BookingResponse response = new BookingResponse();
-        response.setBookingId(saved.getBookingId());
-        response.setUserId(saved.getUserId());
-        response.setVehicleId(saved.getVehicleId());
-        response.setStartDate(saved.getStartDate());
-        response.setEndDate(saved.getEndDate());
-        response.setStatus(saved.getStatus());
-        return response;
+        
+     // Update vehicle availability
+        restTemplate.put(
+            VEHICLE_SERVICE_URL + request.getVehicleId() + "/availability?available=false",
+            null
+        );
+        
+        return mapToResponse(booking);
+        
+		/*
+		 * BookingResponse response = new BookingResponse();
+		 * response.setBookingId(saved.getBookingId());
+		 * response.setUserId(saved.getUserId());
+		 * response.setVehicleId(saved.getVehicleId());
+		 * response.setStartDate(saved.getStartDate());
+		 * response.setEndDate(saved.getEndDate());
+		 * response.setStatus(saved.getStatus()); return response;
+		 */
     }
 
     public List<BookingResponse> getBookingsByUser(Long userId) {
@@ -85,6 +94,12 @@ public class BookingService {
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
         booking.setStatus("CANCELLED");
         bookingRepository.save(booking);
+        
+     // Notify vehicle service
+        restTemplate.put(
+            VEHICLE_SERVICE_URL + booking.getVehicleId() + "/availability?available=true",
+            null
+        );
     }
     
     private BookingResponse mapToResponse(Booking booking) {
