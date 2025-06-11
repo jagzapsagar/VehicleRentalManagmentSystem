@@ -46,7 +46,7 @@ public class BookingService {
         return response;
     }
 
-   /* public List<BookingResponse> getBookingsByUser(UUID userId) {
+    public List<BookingResponse> getBookingsByUser(Long userId) {
         return bookingRepository.findByUserId(userId)
                 .stream()
                 .map(b -> {
@@ -60,7 +60,7 @@ public class BookingService {
                     return r;
                 })
                 .collect(Collectors.toList());
-    }*/
+    }
 
     public void cancelBooking(Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId)

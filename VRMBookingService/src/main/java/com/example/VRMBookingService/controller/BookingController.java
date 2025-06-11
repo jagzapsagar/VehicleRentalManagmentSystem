@@ -40,8 +40,8 @@ public class BookingController {
 
     @GetMapping("/user/{userId}")
     public List<BookingResponse> getUserBookings(@PathVariable Long userId) {
-        //return bookingService.getBookingsByUser(userId);
-    	return null;
+        return bookingService.getBookingsByUser(userId);
+    	//return null;
     }
 
     @PutMapping("/cancel/{bookingId}")
