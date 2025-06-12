@@ -1,0 +1,53 @@
+package com.example.VRMUserService.controller;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.VRMUserService.dto.LoginRequest;
+import com.example.VRMUserService.dto.UserRequest;
+import com.example.VRMUserService.dto.UserResponse;
+import com.example.VRMUserService.dto.ValidateUserRequest;
+import com.example.VRMUserService.dto.ValidateUserResponse;
+import com.example.VRMUserService.entity.User;
+import com.example.VRMUserService.service.UserService;
+
+@RestController
+@RequestMapping("/users")
+public class UserController {
+	
+	@Autowired
+    private UserService userService;
+
+    @PostMapping("/register")
+    public ResponseEntity<UserResponse> register(@RequestBody UserRequest request) {
+        return ResponseEntity.ok(userService.registerUser(request));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(userService.login(request));
+    }
+    
+    @PostMapping("/validate")
+    public ResponseEntity<ValidateUserResponse> validateUser(@RequestBody ValidateUserRequest request) {
+        Optional<User> userOptional = userService.getUserByEmail(request.getEmail());
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            // password check
+            if (userService.getPasswordEncoder().matches(request.getPassword(), user.getPassword())) {
+                return ResponseEntity.ok(new ValidateUserResponse(user.getEmail(), user.getRole()));
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+}
