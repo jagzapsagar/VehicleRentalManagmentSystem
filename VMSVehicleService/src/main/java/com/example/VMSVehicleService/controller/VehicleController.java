@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,6 +43,13 @@ public class VehicleController {
 	public ResponseEntity<Void> updateAvailability(@PathVariable Long id, @RequestParam boolean available) {
 		vehicleService.updateAvailability(id, available);
 		return ResponseEntity.ok().build();
+	}
+	
+	@DeleteMapping("/delete/{id}")
+	public ResponseEntity<Object> delete(@PathVariable Long id){
+		String message = vehicleService.deleteById(id);
+		return ResponseEntity.ok().body(message); // HTTP 200 OK with success message
+		
 	}
 
 }

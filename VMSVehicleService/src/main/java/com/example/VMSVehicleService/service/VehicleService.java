@@ -1,6 +1,7 @@
 package com.example.VMSVehicleService.service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,4 +54,14 @@ public class VehicleService {
 		return r;
 	}
 
+	public String deleteById(long id) {
+			// TODO Auto-generated method stub
+			if(vehicleRepository.existsById(id)) {
+				vehicleRepository.deleteById(id);
+				return "Vehicle deleted successfully";
+			}else {
+	            throw new NoSuchElementException("Vehicle with ID " + id + " not found");
+	        }
+		
+	}
 }
