@@ -8,8 +8,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpEntity;
+
 
 import com.example.demo.util.JwtUtil;
+import reactor.core.publisher.Mono;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpStatus;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class AuthenticationFilter extends AbstractGatewayFilterFactory<AuthenticationFilter.Config> {
@@ -58,9 +66,27 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<Authentic
                 	 //http://localhost:8088/auth/validate?token=
                 	 System.out.println("http://localhost:8085/auth/validate?token="+ token);
                 	 try {
-                		 template.getForObject("http://localhost:8085/auth/validate?token=" + token, String.class);
+                		 //template.getForObject("http://localhost:8085/auth/validate?token=" + token, String.class);
+                		 HttpHeaders headerss = new HttpHeaders();
+                		 headerss.setBearerAuth(token); // sets Authorization: Bearer <token>
+                		 HttpEntity<String> entity = new HttpEntity<>(headerss);
+
+                		 ResponseEntity<String> response = template.exchange(
+                		     "http://localhost:8085/auth/validate",
+                		     HttpMethod.GET,
+                		     entity,
+                		     String.class
+                		 );
+
+                		 // Optionally, you can check the response if needed
+                	System.out.println("✅ Security service responded: " + response.getStatusCode());
                 	 }catch(Exception e){
                 		 System.out.println("Catching exception: "+e.getMessage());
+                		// Respond with 401 and custom message
+                		    exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                		    byte[] message = "Invalid token".getBytes(StandardCharsets.UTF_8);
+                		    DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(message);
+                		    return exchange.getResponse().writeWith(Mono.just(buffer));
                 	 }
                     
                     System.out.println("✅ Token is valid, proceeding to target service...");

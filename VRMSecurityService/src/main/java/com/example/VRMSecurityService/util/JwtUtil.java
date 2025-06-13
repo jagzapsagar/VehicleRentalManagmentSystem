@@ -21,7 +21,7 @@ public class JwtUtil {
 	@Value("${jwt.secret}")
     private String secret;
 
-    private final long expirationMs = 86400000;
+    private final long expirationMs = 86400000; //86400000 milliseconds -> 1 day.
     
     public String generateToken(String email, String role) {
         return Jwts.builder()
@@ -32,6 +32,8 @@ public class JwtUtil {
                 .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
+    
+    
     
     public void validateToken(String token) {
         try {
