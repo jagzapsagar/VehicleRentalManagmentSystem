@@ -6,12 +6,21 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 import com.example.VRMBookingService.dto.BookingRequest;
 import com.example.VRMBookingService.dto.BookingResponse;
 import com.example.VRMBookingService.dto.VehicleResponse;
 import com.example.VRMBookingService.entity.Booking;
+import com.example.VRMBookingService.exception.BookingNotFoundException;
+import com.example.VRMBookingService.exception.VehicleNotAvailableException;
 import com.example.VRMBookingService.repository.BookingRepository;
 
 @Service
@@ -25,24 +34,47 @@ public class BookingService {
 	
 	private final String VEHICLE_SERVICE_URL = "http://localhost:8082/vehicles/";
 	
-	public List<BookingResponse> getAllBookings() {
-	    return bookingRepository.findAll()
-	        .stream()
-	        .map(this::mapToResponse)
-	        .collect(Collectors.toList());
-	}
+	/*
+	 * public List<BookingResponse> getAllBookings() { return
+	 * bookingRepository.findAll() .stream() .map(this::mapToResponse)
+	 * .collect(Collectors.toList()); }
+	 */
 
+	public Page<BookingResponse> getAllBookingsPaginated(int page, int size) {
+	    //Pageable pageable = PageRequest.of(page, size);
+	    Pageable pageable = PageRequest.of(page, size, Sort.by("userId").ascending());
+	    Page<Booking> bookingsPage = bookingRepository.findAll(pageable);
+	    if (bookingsPage.isEmpty()) {
+	        throw new BookingNotFoundException("No bookings found");
+	    }
+	    return bookingsPage.map(this::mapToResponse);
+	}
 	
 	public BookingResponse bookVehicle(BookingRequest request) {
 		
-		// Fetch vehicle details
-        VehicleResponse vehicle = restTemplate.getForObject(
-            VEHICLE_SERVICE_URL + request.getVehicleId(),
-            VehicleResponse.class
-        );
+		/*
+		 * // Fetch vehicle details VehicleResponse vehicle = restTemplate.getForObject(
+		 * VEHICLE_SERVICE_URL + request.getVehicleId(), VehicleResponse.class );
+		 */
+		
+		VehicleResponse vehicle;
+	    try {
+	        ResponseEntity<VehicleResponse> resp = restTemplate.exchange(
+	            VEHICLE_SERVICE_URL + request.getVehicleId(),
+	            HttpMethod.GET,
+	            null,
+	            VehicleResponse.class
+	        );
+	        vehicle = resp.getBody();
+	    } catch (HttpStatusCodeException ex) {
+	        // Service returned an error, e.g., 404 or 503
+	        throw new VehicleNotAvailableException(
+	            "Exception :- Vehicle not available: " + ex.getStatusCode()
+	        );
+	    }
 
         if (vehicle == null || !vehicle.isAvailable()) {
-            throw new RuntimeException("Vehicle not available");
+            throw new VehicleNotAvailableException("Exception :- Vehicle not available");
         }
      // Create and save booking
         Booking booking = new Booking();

@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Booking {
@@ -16,11 +17,14 @@ public class Booking {
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long bookingId;
-
+	
+	
     private long userId;
+	
     private long vehicleId;
-
+	
     private LocalDate startDate;
+	
     private LocalDate endDate;
 
     private String status; // BOOKED, CANCELLED, COMPLETED

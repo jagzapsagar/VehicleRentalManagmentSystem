@@ -5,10 +5,16 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.data.domain.Pageable;
 
 import com.example.VRMUserService.dto.LoginRequest;
 import com.example.VRMUserService.dto.UserRequest;
@@ -18,12 +24,21 @@ import com.example.VRMUserService.dto.ValidateUserResponse;
 import com.example.VRMUserService.entity.User;
 import com.example.VRMUserService.service.UserService;
 
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
 	
 	@Autowired
     private UserService userService;
+	
+	@GetMapping("/get")
+    public Page<User> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "2") int size) {
+        return userService.getUsersPaginated(page, size);
+    }
+
 
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@RequestBody UserRequest request) {

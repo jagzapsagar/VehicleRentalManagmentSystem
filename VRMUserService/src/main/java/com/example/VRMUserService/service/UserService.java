@@ -4,9 +4,13 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 
 import com.example.VRMUserService.dto.LoginRequest;
 import com.example.VRMUserService.dto.UserRequest;
@@ -69,6 +73,12 @@ public class UserService {
 	    public PasswordEncoder getPasswordEncoder() {
 	        return passwordEncoder;
 	    }
+
+		public Page<User> getUsersPaginated(int page, int size) {
+        //Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("firstName").ascending());
+        return userRepository.findAll(pageable);
+    }
 
 
 }
