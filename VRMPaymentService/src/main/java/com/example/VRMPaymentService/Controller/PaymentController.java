@@ -1,5 +1,8 @@
 package com.example.VRMPaymentService.Controller;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.VRMPaymentService.dto.PaymentRequest;
 import com.example.VRMPaymentService.dto.PaymentResponse;
+import com.example.VRMPaymentService.entity.Payment;
+import com.example.VRMPaymentService.service.PaymentService;
 import com.razorpay.RazorpayClient;
 import com.razorpay.Order;
 
@@ -18,11 +23,14 @@ public class PaymentController {
 	
 	@Autowired
     private RazorpayClient razorpayClient;
+	
+	@Autowired
+	private PaymentService paymentService;
 
     @PostMapping("/create-order")
     public PaymentResponse createOrder(@RequestBody PaymentRequest request) throws Exception {
         JSONObject options = new JSONObject();
-        options.put("amount", request.getAmount());
+        //options.put("amount", request.getAmount());
         options.put("amount", request.getAmount() * 100);
         options.put("currency", request.getCurrency());
         options.put("receipt", request.getReceipt());
@@ -30,7 +38,16 @@ public class PaymentController {
 
         //Order order = razorpayClient.Orders.create(options);
         Order order = razorpayClient.orders.create(options);
+        //Long bookingId = Long.valueOf(order.get("receipt"));
 
+     // Save payment in DB using setters
+        Payment payment = new Payment();
+        payment.setBookingId(request.getBookingId());
+        payment.setAmount(request.getAmount()); 
+        payment.setStatus(order.get("status"));
+        payment.setPaymentDate(LocalDateTime.now());
+        paymentService.savePayment(payment);
+        
         PaymentResponse response = new PaymentResponse();
         response.setId(order.get("id"));
         response.setCurrency(order.get("currency"));

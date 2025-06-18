@@ -2,6 +2,7 @@ package com.example.VRMPaymentService.dto;
 
 public class PaymentRequest {
 	
+	private Long bookingId;
 	private int amount;
     private String currency = "INR";
     private String receipt;
@@ -9,11 +10,18 @@ public class PaymentRequest {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public PaymentRequest(int amount, String currency, String receipt) {
+	public PaymentRequest(Long bookingId, int amount, String currency, String receipt) {
 		super();
+		this.bookingId = bookingId;
 		this.amount = amount;
 		this.currency = currency;
 		this.receipt = receipt;
+	}
+	public Long getBookingId() {
+		return bookingId;
+	}
+	public void setBookingId(Long bookingId) {
+		this.bookingId = bookingId;
 	}
 	public int getAmount() {
 		return amount;
@@ -35,9 +43,9 @@ public class PaymentRequest {
 	}
 	@Override
 	public String toString() {
-		return "PaymentRequest [amount=" + amount + ", currency=" + currency + ", receipt=" + receipt + "]";
+		return "PaymentRequest [bookingId=" + bookingId + ", amount=" + amount + ", currency=" + currency + ", receipt="
+				+ receipt + "]";
 	}
-    
-    
-
+	
+	
 }
