@@ -1,5 +1,6 @@
 package com.example.VRMBookingService.service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -76,6 +77,14 @@ public class BookingService {
         if (vehicle == null || !vehicle.isAvailable()) {
             throw new VehicleNotAvailableException("Exception :- Vehicle not available");
         }
+      // Calculated Bill
+     // Calculate rental duration (inclusive)
+        long daysBetween = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate());
+        long rentalDays = daysBetween; // counting both start and end
+
+        double billAmount = rentalDays * vehicle.getPricePerDay();
+        System.out.println("********************Calculated Bill: "+billAmount);
+        
      // Create and save booking
         Booking booking = new Booking();
         booking.setUserId(request.getUserId());
