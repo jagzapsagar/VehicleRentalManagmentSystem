@@ -1,4 +1,4 @@
-
+POST -> http://localhost:8087/payment/create-order
 {
   "bookingId": 12345,
   "amount": 5000,
