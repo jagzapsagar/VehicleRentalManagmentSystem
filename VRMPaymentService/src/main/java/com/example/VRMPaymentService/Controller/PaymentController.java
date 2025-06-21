@@ -38,11 +38,14 @@ public class PaymentController {
 
         //Order order = razorpayClient.Orders.create(options);
         Order order = razorpayClient.orders.create(options);
+        //payment.setPaymentId(order.get("id"));
         //Long bookingId = Long.valueOf(order.get("receipt"));
 
      // Save payment in DB using setters
         Payment payment = new Payment();
-        payment.setBookingId(request.getBookingId());
+        //payment.setBookingId(request.getBookingId());
+        payment.setUserId(request.getUserId());
+        
         payment.setAmount(request.getAmount()); 
         payment.setStatus(order.get("status"));
         payment.setPaymentDate(LocalDateTime.now());

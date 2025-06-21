@@ -17,7 +17,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
 
-    private Long bookingId;
+    private Long userId;
 
     private int amount;
 
@@ -30,10 +30,10 @@ public class Payment {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Payment(Long paymentId, Long bookingId, int amount, LocalDateTime paymentDate, String status) {
+	public Payment(Long paymentId, Long userId, int amount, LocalDateTime paymentDate, String status) {
 		super();
 		this.paymentId = paymentId;
-		this.bookingId = bookingId;
+		this.userId = userId;
 		this.amount = amount;
 		this.paymentDate = paymentDate;
 		this.status = status;
@@ -47,20 +47,20 @@ public class Payment {
 		this.paymentId = paymentId;
 	}
 
-	public Long getBookingId() {
-		return bookingId;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setBookingId(Long bookingId) {
-		this.bookingId = bookingId;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public int getAmount() {
 		return amount;
 	}
 
-	public void setAmount(int i) {
-		this.amount = i;
+	public void setAmount(int amount) {
+		this.amount = amount;
 	}
 
 	public LocalDateTime getPaymentDate() {
@@ -78,6 +78,8 @@ public class Payment {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	
     
 	/*
 	 * @PrePersist public void prePersist() { this.paymentDate =

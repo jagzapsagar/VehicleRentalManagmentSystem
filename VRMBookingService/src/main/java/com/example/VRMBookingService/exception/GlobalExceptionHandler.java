@@ -45,9 +45,11 @@ public class GlobalExceptionHandler {
 	}
 
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGlobalException(Exception ex, WebRequest request) {
-        return new ResponseEntity<>("Something went wrong: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+	/*
+	 * @ExceptionHandler(Exception.class) public ResponseEntity<String>
+	 * handleGlobalException(Exception ex, WebRequest request) { return new
+	 * ResponseEntity<>("Something went wrong: " + ex.getMessage(),
+	 * HttpStatus.INTERNAL_SERVER_ERROR); }
+	 */
 
 }
