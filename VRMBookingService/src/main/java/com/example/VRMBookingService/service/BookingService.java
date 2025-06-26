@@ -31,7 +31,9 @@ import com.example.VRMBookingService.exception.BookingNotFoundException;
 import com.example.VRMBookingService.exception.VehicleNotAvailableException;
 import com.example.VRMBookingService.repository.BookingRepository;
 
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+//import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import jakarta.servlet.http.HttpServletRequest;
+
 
 @Service
 public class BookingService {
@@ -41,11 +43,19 @@ public class BookingService {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private HttpServletRequest request;
 
 	private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
 
-	private final String VEHICLE_SERVICE_URL = "http://localhost:8082/vehicles/";
-	private final String PAYMENT_SERVICE_URL = "http://localhost:8087/payment/create-order";
+	//private final String VEHICLE_SERVICE_URL = "http://localhost:8082/vehicles/";
+	private final String VEHICLE_SERVICE_URL = "http://VMSVEHICLESERVICE/vehicles/";
+	
+	//private final String PAYMENT_SERVICE_URL = "http://localhost:8087/payment/create-order";
+	//private final String PAYMENT_SERVICE_URL = "http://localhost:8088/payment/create-order";
+	private final String PAYMENT_SERVICE_URL = "http://VRMPAYMENTSERVICE/payment/create-order";
+
 
 	/*
 	 * public List<BookingResponse> getAllBookings() { return
@@ -177,23 +187,29 @@ public class BookingService {
 	}
 
 	// Utility Methods
-	@CircuitBreaker(name = "vehicleService", fallbackMethod = "vehicleFallback")
+	//@CircuitBreaker(name = "vehicleService", fallbackMethod = "vehicleFallback")
 	private VehicleResponse fetchVehicleDetails(Long vehicleId) {
 		ResponseEntity<VehicleResponse> resp = restTemplate.exchange(VEHICLE_SERVICE_URL + vehicleId, HttpMethod.GET,
 				null, VehicleResponse.class);
 		return resp.getBody();
 	}
 
-	@CircuitBreaker(name = "paymentService", fallbackMethod = "paymentFallback")
+	//@CircuitBreaker(name = "paymentService", fallbackMethod = "paymentFallback")
 	private Map createPayment(Long userId, double amount) {
 		HashMap<String, Object> requestBody = new HashMap<>();
 		requestBody.put("userId", userId);
 		requestBody.put("amount", amount);
 		requestBody.put("currency", "INR");
 		requestBody.put("receipt", "test");
+		
+		String token = request.getHeader("Authorization");
+		
+		 // reuse it
+		//HttpEntity<String> entity = new HttpEntity<>(headers);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("Authorization", token); // added for JWT
 		HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
 		ResponseEntity<Map> response = restTemplate.postForEntity(PAYMENT_SERVICE_URL, entity, Map.class);
