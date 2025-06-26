@@ -72,59 +72,7 @@ public class BookingService {
 		}
 		return bookingsPage.map(this::mapToResponse);
 	}
-/*
-	public BookingResponse bookVehicle(BookingRequest request) {
-		VehicleResponse vehicle;
-		try {
-			ResponseEntity<VehicleResponse> resp = restTemplate.exchange(VEHICLE_SERVICE_URL + request.getVehicleId(),
-					HttpMethod.GET, null, VehicleResponse.class);
-			vehicle = resp.getBody();
-		} catch (HttpStatusCodeException ex) {
-			// Service returned an error, e.g., 404 or 503
-			throw new VehicleNotAvailableException("Exception :- Vehicle not available: " + ex.getStatusCode());
-		}
 
-		if (vehicle == null || !vehicle.isAvailable()) {
-			throw new VehicleNotAvailableException("Exception :- Vehicle not available");
-		}
-		// Calculated Bill
-		// Calculate rental duration (inclusive)
-		long daysBetween = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate());
-		long rentalDays = daysBetween; // counting both start and end
-
-		double billAmount = rentalDays * vehicle.getPricePerDay();
-		System.out.println("********************Calculated Bill: " + billAmount);
-
-		// Calling Payment Service
-		HashMap<String, Object> requestBody = new HashMap<>();
-		requestBody.put("userId", request.getUserId());
-		requestBody.put("amount", billAmount);
-		requestBody.put("currency", "INR");
-		requestBody.put("receipt", "test");
-
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.APPLICATION_JSON);
-
-		HttpEntity<Map<String, Object>> requestt = new HttpEntity<>(requestBody, header);
-		logger.info(PAYMENT_SERVICE_URL + " Calling...");
-		ResponseEntity<Map> reponse = restTemplate.postForEntity(PAYMENT_SERVICE_URL, requestt, Map.class);
-
-		// Create and save booking
-		Booking booking = new Booking();
-		booking.setUserId(request.getUserId());
-		booking.setVehicleId(request.getVehicleId());
-		booking.setStartDate(request.getStartDate());
-		booking.setEndDate(request.getEndDate());
-		booking.setStatus("BOOKED");
-
-		Booking saved = bookingRepository.save(booking);
-
-		// Update vehicle availability
-		restTemplate.put(VEHICLE_SERVICE_URL + request.getVehicleId() + "/availability?available=false", null);
-
-		return mapToResponse(booking);
-
-	}*/
 	
 	public BookingResponse bookVehicle(BookingRequest request) {
 	    VehicleResponse vehicle = fetchVehicleDetails(request.getVehicleId());
@@ -225,5 +173,59 @@ public class BookingService {
 		System.out.println("🚫 Payment service failed: " + t.getMessage());
 		throw new RuntimeException("Fallback: Payment Service is unavailable");
 	}
+	
+	/*
+	public BookingResponse bookVehicle(BookingRequest request) {
+		VehicleResponse vehicle;
+		try {
+			ResponseEntity<VehicleResponse> resp = restTemplate.exchange(VEHICLE_SERVICE_URL + request.getVehicleId(),
+					HttpMethod.GET, null, VehicleResponse.class);
+			vehicle = resp.getBody();
+		} catch (HttpStatusCodeException ex) {
+			// Service returned an error, e.g., 404 or 503
+			throw new VehicleNotAvailableException("Exception :- Vehicle not available: " + ex.getStatusCode());
+		}
+
+		if (vehicle == null || !vehicle.isAvailable()) {
+			throw new VehicleNotAvailableException("Exception :- Vehicle not available");
+		}
+		// Calculated Bill
+		// Calculate rental duration (inclusive)
+		long daysBetween = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate());
+		long rentalDays = daysBetween; // counting both start and end
+
+		double billAmount = rentalDays * vehicle.getPricePerDay();
+		System.out.println("********************Calculated Bill: " + billAmount);
+
+		// Calling Payment Service
+		HashMap<String, Object> requestBody = new HashMap<>();
+		requestBody.put("userId", request.getUserId());
+		requestBody.put("amount", billAmount);
+		requestBody.put("currency", "INR");
+		requestBody.put("receipt", "test");
+
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<Map<String, Object>> requestt = new HttpEntity<>(requestBody, header);
+		logger.info(PAYMENT_SERVICE_URL + " Calling...");
+		ResponseEntity<Map> reponse = restTemplate.postForEntity(PAYMENT_SERVICE_URL, requestt, Map.class);
+
+		// Create and save booking
+		Booking booking = new Booking();
+		booking.setUserId(request.getUserId());
+		booking.setVehicleId(request.getVehicleId());
+		booking.setStartDate(request.getStartDate());
+		booking.setEndDate(request.getEndDate());
+		booking.setStatus("BOOKED");
+
+		Booking saved = bookingRepository.save(booking);
+
+		// Update vehicle availability
+		restTemplate.put(VEHICLE_SERVICE_URL + request.getVehicleId() + "/availability?available=false", null);
+
+		return mapToResponse(booking);
+
+	}*/
 
 }
