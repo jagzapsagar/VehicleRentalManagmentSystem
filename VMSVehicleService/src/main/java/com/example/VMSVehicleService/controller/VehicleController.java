@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.VMSVehicleService.dto.VehicleRequest;
 import com.example.VMSVehicleService.dto.VehicleResponse;
+import com.example.VMSVehicleService.entity.Vehicle;
 import com.example.VMSVehicleService.service.VehicleService;
 
 @RestController
@@ -58,5 +59,17 @@ public class VehicleController {
 		return ResponseEntity.ok().body(message); // HTTP 200 OK with success message
 		
 	}
+	
+	@PutMapping("/{id}")
+    public ResponseEntity<Vehicle> updateVehicle(@PathVariable Long id, @RequestBody Vehicle updatedVehicle) {
+        Vehicle updated = vehicleService.updateVehicle(id, updatedVehicle);
+        return ResponseEntity.ok(updated);
+    }
+	
+	@GetMapping("/count")
+	public long getVehicleCount() {
+	    return vehicleService.countVehicles();  // This should return a long
+	}
+
 
 }

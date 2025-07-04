@@ -56,5 +56,10 @@ public class BookingController {
     public void cancelBooking(@PathVariable Long bookingId) {
         bookingService.cancelBooking(bookingId);
     }
+    
+    @GetMapping("/count")
+	public long getBookingCount() {
+	    return bookingService.countBookings();  // This should return a long
+	}
 
 }

@@ -68,4 +68,22 @@ public class VehicleService {
 	public List<VehicleResponse> getAllVehicles() {
 		return vehicleRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
 	}
+	
+	public Vehicle updateVehicle(Long id, Vehicle updatedVehicle) {
+        Vehicle existing = vehicleRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Vehicle not found with ID: " + id));
+
+        existing.setBrand(updatedVehicle.getBrand());
+        existing.setModel(updatedVehicle.getModel());
+        existing.setType(updatedVehicle.getType());
+        existing.setPricePerDay(updatedVehicle.getPricePerDay());
+        existing.setAvailable(true);
+
+        return vehicleRepository.save(existing);
+    }
+	
+	public long countVehicles() {
+	    return vehicleRepository.count();
+	}
+
 }
