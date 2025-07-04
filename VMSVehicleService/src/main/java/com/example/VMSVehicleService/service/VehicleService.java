@@ -64,4 +64,8 @@ public class VehicleService {
 	        }
 		
 	}
+
+	public List<VehicleResponse> getAllVehicles() {
+		return vehicleRepository.findAll().stream().map(this::mapToResponse).collect(Collectors.toList());
+	}
 }

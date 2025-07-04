@@ -30,6 +30,11 @@ public class VehicleController {
 	public ResponseEntity<VehicleResponse> addVehicle(@RequestBody VehicleRequest request) {
 		return ResponseEntity.ok(vehicleService.addVehicle(request));
 	}
+	
+	@GetMapping
+	public ResponseEntity<List<VehicleResponse>> getAllVehicles() {
+		return ResponseEntity.ok(vehicleService.getAllVehicles());
+	}
 
 	@GetMapping("/available")
 	public ResponseEntity<List<VehicleResponse>> getAvailableVehicles() {
