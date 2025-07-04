@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,46 +26,50 @@ import com.example.VRMUserService.dto.ValidateUserResponse;
 import com.example.VRMUserService.entity.User;
 import com.example.VRMUserService.service.UserService;
 
-
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
-	
+
 	@Autowired
-    private UserService userService;
-	
+	private UserService userService;
+
 	@GetMapping("/get")
-    public Page<User> getUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size) {
-        return userService.getUsersPaginated(page, size);
-    }
+	public Page<User> getUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size) {
+		return userService.getUsersPaginated(page, size);
+	}
 
+	@PostMapping("/register")
+	public ResponseEntity<UserResponse> register(@RequestBody UserRequest request) {
+		return ResponseEntity.ok(userService.registerUser(request));
+	}
 
-    @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@RequestBody UserRequest request) {
-        return ResponseEntity.ok(userService.registerUser(request));
-    }
+	@PostMapping("/login")
+	public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+		return ResponseEntity.ok(userService.login(request));
+	}
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        return ResponseEntity.ok(userService.login(request));
-    }
-    
-    @PostMapping("/validate")
-    public ResponseEntity<ValidateUserResponse> validateUser(@RequestBody ValidateUserRequest request) {
-        Optional<User> userOptional = userService.getUserByEmail(request.getEmail());
+	@PostMapping("/validate")
+	public ResponseEntity<ValidateUserResponse> validateUser(@RequestBody ValidateUserRequest request) {
+		Optional<User> userOptional = userService.getUserByEmail(request.getEmail());
 
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            // password check
-            if (userService.getPasswordEncoder().matches(request.getPassword(), user.getPassword())) {
-                return ResponseEntity.ok(new ValidateUserResponse(user.getEmail(), user.getRole()));
-            }
-        }
+		if (userOptional.isPresent()) {
+			User user = userOptional.get();
+			// password check
+			if (userService.getPasswordEncoder().matches(request.getPassword(), user.getPassword())) {
+				return ResponseEntity.ok(new ValidateUserResponse(user.getEmail(), user.getRole()));
+			}
+		}
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	}
+
+	@GetMapping("/userid/{email}")
+	public ResponseEntity<Long> getUserIdByEmail(@PathVariable String email) {
+	    return userService.getUserByEmail(email)
+	            .map(user -> ResponseEntity.ok(user.getUserId()))
+	            .orElse(ResponseEntity.notFound().build());
+	}
+
 
 }
