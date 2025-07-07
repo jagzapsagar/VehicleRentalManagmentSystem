@@ -24,6 +24,7 @@ public class VehicleService {
 		v.setModel(request.getModel());
 		v.setType(request.getType());
 		v.setPricePerDay(request.getPricePerDay());
+		v.setImageUrl(request.getImageUrl()); 
 
 		return mapToResponse(vehicleRepository.save(v));
 	}
@@ -51,6 +52,7 @@ public class VehicleService {
 		r.setType(v.getType());
 		r.setAvailable(v.isAvailable());
 		r.setPricePerDay(v.getPricePerDay());
+		r.setImageUrl(v.getImageUrl());
 		return r;
 	}
 
@@ -78,6 +80,7 @@ public class VehicleService {
         existing.setType(updatedVehicle.getType());
         existing.setPricePerDay(updatedVehicle.getPricePerDay());
         existing.setAvailable(true);
+        //existing.setImageUrl(updatedVehicle.getImageUrl());
 
         return vehicleRepository.save(existing);
     }

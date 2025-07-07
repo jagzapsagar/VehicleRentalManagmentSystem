@@ -5,6 +5,7 @@ public class VehicleRequest {
     private String model;
     private String type;
     private Double pricePerDay;
+    private String imageUrl;
 	public String getBrand() {
 		return brand;
 	}
@@ -29,6 +30,14 @@ public class VehicleRequest {
 	public void setPricePerDay(Double pricePerDay) {
 		this.pricePerDay = pricePerDay;
 	}
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+	
+    
     
     
 

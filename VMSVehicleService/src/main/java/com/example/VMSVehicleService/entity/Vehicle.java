@@ -2,6 +2,7 @@ package com.example.VMSVehicleService.entity;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +24,8 @@ public class Vehicle {
 	    private String type;
 	    private Double pricePerDay;
 	    private boolean available;
+	    @Column(name = "image_url", length = 1000)
+	    private String imageUrl;
 
 	    private LocalDateTime createdAt;
 	    private LocalDateTime updatedAt;
@@ -45,7 +48,7 @@ public class Vehicle {
 		}
 
 		public Vehicle(Long id, String brand, String model, String type, Double pricePerDay, boolean available,
-				LocalDateTime createdAt, LocalDateTime updatedAt) {
+				String imageUrl, LocalDateTime createdAt, LocalDateTime updatedAt) {
 			super();
 			this.id = id;
 			this.brand = brand;
@@ -53,6 +56,7 @@ public class Vehicle {
 			this.type = type;
 			this.pricePerDay = pricePerDay;
 			this.available = available;
+			this.imageUrl = imageUrl;
 			this.createdAt = createdAt;
 			this.updatedAt = updatedAt;
 		}
@@ -105,6 +109,14 @@ public class Vehicle {
 			this.available = available;
 		}
 
+		public String getImageUrl() {
+			return imageUrl;
+		}
+
+		public void setImageUrl(String imageUrl) {
+			this.imageUrl = imageUrl;
+		}
+
 		public LocalDateTime getCreatedAt() {
 			return createdAt;
 		}
@@ -124,9 +136,11 @@ public class Vehicle {
 		@Override
 		public String toString() {
 			return "Vehicle [id=" + id + ", brand=" + brand + ", model=" + model + ", type=" + type + ", pricePerDay="
-					+ pricePerDay + ", available=" + available + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt
-					+ "]";
+					+ pricePerDay + ", available=" + available + ", imageUrl=" + imageUrl + ", createdAt=" + createdAt
+					+ ", updatedAt=" + updatedAt + "]";
 		}
+
+		
 	    
 	    
 

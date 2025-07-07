@@ -8,6 +8,7 @@ public class VehicleResponse {
     private String type;
     private Double pricePerDay;
     private boolean available;
+    private String imageUrl;
 	public Long getId() {
 		return id;
 	}
@@ -44,6 +45,15 @@ public class VehicleResponse {
 	public void setAvailable(boolean available) {
 		this.available = available;
 	}
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+    
+	
+    
     
     
 
