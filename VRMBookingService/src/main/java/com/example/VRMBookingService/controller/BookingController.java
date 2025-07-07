@@ -24,42 +24,41 @@ import jakarta.validation.Valid;
 @RequestMapping("/booking")
 @CrossOrigin(origins = "http://localhost:4200")
 public class BookingController {
-	
+
 	@Autowired
-    private BookingService bookingService;
-	
+	private BookingService bookingService;
+
 	/*
 	 * @GetMapping public List<BookingResponse> getAllBookings() { return
 	 * bookingService.getAllBookings(); }
 	 */
-	
+
 	@GetMapping
-	public Page<BookingResponse> getAllBookings(
-	        @RequestParam(defaultValue = "0") int page,
-	        @RequestParam(defaultValue = "2") int size) {
-	    return bookingService.getAllBookingsPaginated(page, size);
+	public Page<BookingResponse> getAllBookings(@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "2") int size) {
+		return bookingService.getAllBookingsPaginated(page, size);
 	}
 
-	
 	@PostMapping
-    public BookingResponse createBooking(@RequestBody @Valid BookingRequest request) {
-        return bookingService.bookVehicle(request);
-    }
+	public BookingResponse createBooking(@RequestBody @Valid BookingRequest request) {
+		return bookingService.bookVehicle(request);
+	}
 
-    @GetMapping("/user/{userId}")
-    public List<BookingResponse> getUserBookings(@PathVariable Long userId) {
-        return bookingService.getBookingsByUser(userId);
-    	//return null;
-    }
+	@GetMapping("/user/{userId}")
+	public List<BookingResponse> getUserBookings(@PathVariable Long userId) {
+		return bookingService.getBookingsByUser(userId);
 
-    @PutMapping("/cancel/{bookingId}")
-    public void cancelBooking(@PathVariable Long bookingId) {
-        bookingService.cancelBooking(bookingId);
-    }
-    
-    @GetMapping("/count")
+	}
+
+	@PutMapping("/cancel/{bookingId}")
+	public void cancelBooking(@PathVariable Long bookingId) {
+		System.out.println("-------Booking Controller.class----Request recieved"+bookingId);
+		bookingService.cancelBooking(bookingId);
+	}
+
+	@GetMapping("/count")
 	public long getBookingCount() {
-	    return bookingService.countBookings();  // This should return a long
+		return bookingService.countBookings(); // This should return a long
 	}
 
 }

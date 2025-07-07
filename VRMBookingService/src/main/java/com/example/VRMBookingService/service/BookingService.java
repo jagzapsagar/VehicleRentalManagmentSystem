@@ -84,7 +84,7 @@ public class BookingService {
 		double billAmount = rentalDays * vehicle.getPricePerDay();
 
 		Map paymentResponse = createPayment(request.getUserId(), billAmount);
-		System.out.println("------------************************--------------");
+		System.out.println("-----BookingService.class-------************************--------------");
 		System.out.println(request.getUserId());
 		System.out.println("------------************************--------------");
 		Booking booking = new Booking();
