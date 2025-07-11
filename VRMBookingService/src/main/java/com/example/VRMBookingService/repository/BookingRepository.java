@@ -10,7 +10,8 @@ import com.example.VRMBookingService.entity.Booking;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 	List<Booking> findByUserId(Long userId);
-	List<Booking> findByEndDateBeforeOrEndDateEquals(LocalDate date);
+	//List<Booking> findByEndDateBeforeOrEndDateEquals(LocalDate date);
+	List<Booking> findByEndDateLessThanEqual(LocalDate endDate);
 
 	//List<Booking> findByUserEmail(String email);
 
