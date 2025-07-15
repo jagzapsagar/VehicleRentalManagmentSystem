@@ -17,6 +17,7 @@ import com.example.VRMUserService.dto.UserDTO;
 import com.example.VRMUserService.dto.UserRequest;
 import com.example.VRMUserService.dto.UserResponse;
 import com.example.VRMUserService.entity.User;
+import com.example.VRMUserService.exception.UserAlreadyExistsException;
 import com.example.VRMUserService.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +36,7 @@ public class UserService {
 	    
 	    public UserResponse registerUser(UserRequest request) {
 	        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-	            throw new RuntimeException("Email already registered.");
+	            throw new UserAlreadyExistsException("Email already registered.");
 	        }
 
 	        User user = new User();

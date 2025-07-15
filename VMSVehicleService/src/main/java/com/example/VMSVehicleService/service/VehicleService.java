@@ -1,11 +1,14 @@
 package com.example.VMSVehicleService.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.VMSVehicleService.dto.VehicleRequest;
 import com.example.VMSVehicleService.dto.VehicleResponse;
@@ -17,6 +20,11 @@ public class VehicleService {
 
 	@Autowired
 	private VehicleRepository vehicleRepository;
+	
+	@Autowired
+    private RestTemplate restTemplate;
+	
+	private final String BOOKING_SERVICE_URL = "http://localhost:8081/booking/vehicle/";
 
 	public VehicleResponse addVehicle(VehicleRequest request) {
 		Vehicle v = new Vehicle();
@@ -88,5 +96,26 @@ public class VehicleService {
 	public long countVehicles() {
 	    return vehicleRepository.count();
 	}
+	
+	public List<Vehicle> getAvailableVehicles(LocalDate startDate, LocalDate endDate) {
+        List<Vehicle> allVehicles = vehicleRepository.findAll();
+
+        return allVehicles.stream()
+                .filter(vehicle -> isVehicleAvailable(vehicle.getId(), startDate, endDate))
+                .collect(Collectors.toList());
+    }
+
+    private boolean isVehicleAvailable(Long vehicleId, LocalDate startDate, LocalDate endDate) {
+        String url = BOOKING_SERVICE_URL + vehicleId +
+                "/availability?startDate=" + startDate + "&endDate=" + endDate;
+
+        try {
+            ResponseEntity<Boolean> response = restTemplate.getForEntity(url, Boolean.class);
+            return Boolean.TRUE.equals(response.getBody());
+        } catch (Exception e) {
+            System.out.println("Failed to check availability: " + e.getMessage());
+            return false;
+        }
+    }
 
 }

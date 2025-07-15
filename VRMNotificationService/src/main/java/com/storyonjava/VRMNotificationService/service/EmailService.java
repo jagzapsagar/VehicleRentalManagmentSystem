@@ -18,7 +18,7 @@ public class EmailService {
     public void sendUserCreatedEmail(UserDTO user) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
-        message.setSubject("🎉 Welcome to VRM - Profile Created!");
+        message.setSubject("🎉 Welcome to VRM System - Profile Created!");
         message.setText("Hello " + user.getFirstName() + ",\n\n" +
                 "Your profile has been successfully created with the following details:\n\n" +
                 "User ID: " + user.getUserId() + "\n" +

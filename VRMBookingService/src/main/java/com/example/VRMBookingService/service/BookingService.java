@@ -76,9 +76,9 @@ public class BookingService {
 	public BookingResponse bookVehicle(BookingRequest request) {
 		VehicleResponse vehicle = fetchVehicleDetails(request.getVehicleId());
 
-		if (vehicle == null || !vehicle.isAvailable()) {
-			throw new VehicleNotAvailableException("Vehicle not available");
-		}
+		//if (vehicle == null || !vehicle.isAvailable()) {
+		//	throw new VehicleNotAvailableException("Vehicle not available");
+		//}
 
 		long rentalDays = ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate());
 		double billAmount = rentalDays * vehicle.getPricePerDay();
@@ -95,7 +95,7 @@ public class BookingService {
 		booking.setStatus("BOOKED");
 		bookingRepository.save(booking);
 
-		restTemplate.put(VEHICLE_SERVICE_URL + request.getVehicleId() + "/availability?available=false", null);
+		//restTemplate.put(VEHICLE_SERVICE_URL + request.getVehicleId() + "/availability?available=false", null);
 
 		return mapToResponse(booking);
 	}
@@ -176,7 +176,8 @@ public class BookingService {
 
 	public long countBookings() {
 		// TODO Auto-generated method stub
-		return bookingRepository.count();
+		//return bookingRepository.count();
+		return bookingRepository.countByStatus("BOOKED"); 
 	}
 
 	/*

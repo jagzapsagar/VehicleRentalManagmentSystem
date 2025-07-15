@@ -1,8 +1,10 @@
 package com.example.VMSVehicleService.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,10 +39,11 @@ public class VehicleController {
 		return ResponseEntity.ok(vehicleService.getAllVehicles());
 	}
 
-	@GetMapping("/available")
-	public ResponseEntity<List<VehicleResponse>> getAvailableVehicles() {
-		return ResponseEntity.ok(vehicleService.getAvailableVehicles());
-	}
+	
+	  @GetMapping("/available") public ResponseEntity<List<VehicleResponse>>
+	  getAvailableVehicles() { return
+	  ResponseEntity.ok(vehicleService.getAvailableVehicles()); }
+	 
 
 	@GetMapping("/{id}")
 	public ResponseEntity<VehicleResponse> getVehicleById(@PathVariable Long id) {
@@ -69,6 +72,14 @@ public class VehicleController {
 	@GetMapping("/count")
 	public long getVehicleCount() {
 	    return vehicleService.countVehicles();  // This should return a long
+	}
+
+	@GetMapping("/availablebydate")
+	public List<Vehicle> getAvailableVehicles(
+	        @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+	        @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+	    
+	    return vehicleService.getAvailableVehicles(startDate, endDate);
 	}
 
 
